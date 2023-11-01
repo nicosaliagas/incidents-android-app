@@ -45,12 +45,7 @@ public class FormIncidentFragment extends Fragment {
 
         setupListeners();
 
-        binding.validateButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mViewModel.sendFormData(isValidate());
-            }
-        });
+
 
         return binding.getRoot();
     }
@@ -58,6 +53,13 @@ public class FormIncidentFragment extends Fragment {
     private void setupListeners() {
         // Source : https://dev.to/mustufa786/textinputlayout-form-validation-using-data-binding-in-android-8gf
         binding.emailText.addTextChangedListener(new TextFieldValidation(binding.emailText));
+
+        binding.validateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mViewModel.sendFormData(isValidate());
+            }
+        });
     }
 
     @Override

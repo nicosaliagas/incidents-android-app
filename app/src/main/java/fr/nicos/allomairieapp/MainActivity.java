@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -26,17 +27,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        /** Icon plus -> ouverture de l'activity Incident */
-        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startIncidentActivity(view);
-            }
-        });
+        setupListeners();
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
@@ -68,5 +64,26 @@ public class MainActivity extends AppCompatActivity {
     private void startIncidentActivity(View view) {
         Intent intent = new Intent(this, IncidentActivity.class);
         startActivity(intent);
+    }
+
+    private void setupListeners() {
+        // View headerview = binding.navView.getHeaderView(0);
+        // headerview.findViewById(R.id.profileImageView).setOnClickListener
+
+        /** Header menu navigation */
+        binding.navView.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startIncidentActivity(view);
+            }
+        });
+
+        /** Icon plus */
+        binding.appBarMain.fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(view.getContext(), "Start a new Activity", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
