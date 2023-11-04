@@ -1,4 +1,4 @@
-package fr.nicos.allomairieapp.ui.core.validation;
+package fr.nicos.allomairieapp.core.validation;
 
 import android.util.Patterns;
 

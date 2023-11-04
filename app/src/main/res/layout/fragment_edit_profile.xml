@@ -5,14 +5,14 @@
     <data>
         <variable
             name="userViewModel"
-            type="fr.nicos.allomairieapp.ui.incident.formIncident.viewModels.UserViewModel" />
+            type="fr.nicos.allomairieapp.ui.profile.editProfile.viewModels.UserViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/formIncidentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.incident.formIncident.FormIncidentFragment"
+        tools:context=".ui.profile.editProfile.EditProfileFragment"
         android:layoutDirection="ltr">
 
         <TableLayout

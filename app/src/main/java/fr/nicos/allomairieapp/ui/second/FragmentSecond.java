@@ -72,7 +72,7 @@ public class FragmentSecond extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        Integer count = FragmentSecondArgs.fromBundle(getArguments()).getMyArg();
+        Integer count = fr.nicos.allomairieapp.ui.second.FragmentSecondArgs.fromBundle(getArguments()).getMyArg();
         String countText = getString(R.string.random_heading, count); // à tester
         TextView headerView = view.findViewById(R.id.textview_header); // getRootView ?
         headerView.setText(countText);

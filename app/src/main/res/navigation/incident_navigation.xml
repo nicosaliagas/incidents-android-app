@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/formIncidentFragment"
-        android:name="fr.nicos.allomairieapp.ui.incident.formIncident.FormIncidentFragment"
+        android:name="fr.nicos.allomairieapp.ui.profile.editProfile.EditProfileFragment"
         android:label="fragment_form_incident"
-        tools:layout="@layout/fragment_form_incident" />
+        tools:layout="@layout/fragment_edit_profile" />
 </navigation>

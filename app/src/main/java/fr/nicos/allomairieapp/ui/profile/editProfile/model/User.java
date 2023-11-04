@@ -1,4 +1,4 @@
-package fr.nicos.allomairieapp.ui.incident.formIncident.model;
+package fr.nicos.allomairieapp.ui.profile.editProfile.model;
 
 
 public class User {

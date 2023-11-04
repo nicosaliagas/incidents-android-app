@@ -55,7 +55,7 @@ public class HomeFragment extends Fragment {
             public void onClick(View v) {
                 Integer currentCount = Integer.parseInt( showCountTextView.getText().toString());
 
-                NavDirections action = HomeFragmentDirections.actionNavHomeToNavFragmentSecond(currentCount);
+                NavDirections action = fr.nicos.allomairieapp.ui.home.HomeFragmentDirections.actionNavHomeToNavFragmentSecond(currentCount);
 
                 NavHostFragment.findNavController(HomeFragment.this)
                         .navigate(action);

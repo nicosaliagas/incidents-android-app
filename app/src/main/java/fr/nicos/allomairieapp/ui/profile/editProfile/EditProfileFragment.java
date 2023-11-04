@@ -1,4 +1,4 @@
-package fr.nicos.allomairieapp.ui.incident.formIncident;
+package fr.nicos.allomairieapp.ui.profile.editProfile;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -17,11 +17,11 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.textfield.TextInputLayout;
 
 import fr.nicos.allomairieapp.R;
-import fr.nicos.allomairieapp.databinding.FragmentFormIncidentBinding;
-import fr.nicos.allomairieapp.ui.core.validation.FieldValidators;
-import fr.nicos.allomairieapp.ui.incident.formIncident.viewModels.UserViewModel;
+import fr.nicos.allomairieapp.databinding.FragmentEditProfileBinding;
+import fr.nicos.allomairieapp.core.validation.FieldValidators;
+import fr.nicos.allomairieapp.ui.profile.editProfile.viewModels.UserViewModel;
 
-public class FormIncidentFragment extends Fragment {
+public class EditProfileFragment extends Fragment {
 
     //private FormIncidentViewModel mViewModel;
     private UserViewModel mViewModel;
@@ -31,7 +31,7 @@ public class FormIncidentFragment extends Fragment {
     private EditText emailText;
     private TextInputLayout emailTextLayout;
 
-    private FragmentFormIncidentBinding binding;
+    private FragmentEditProfileBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -39,7 +39,7 @@ public class FormIncidentFragment extends Fragment {
 
         mViewModel = new UserViewModel();
 
-        binding = FragmentFormIncidentBinding.inflate(inflater, container, false);
+        binding = FragmentEditProfileBinding.inflate(inflater, container, false);
         binding.setUserViewModel(mViewModel);
         binding.executePendingBindings();
 

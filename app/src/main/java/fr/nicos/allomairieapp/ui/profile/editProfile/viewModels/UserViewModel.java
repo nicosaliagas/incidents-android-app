@@ -1,10 +1,17 @@
-package fr.nicos.allomairieapp.ui.incident.formIncident.viewModels;
+package fr.nicos.allomairieapp.ui.profile.editProfile.viewModels;
 
 import androidx.databinding.BaseObservable;
 import androidx.databinding.Bindable;
 
+import java.util.List;
+
 import fr.nicos.allomairieapp.BR;
-import fr.nicos.allomairieapp.ui.incident.formIncident.model.User;
+import fr.nicos.allomairieapp.core.api.NetworkHandler;
+import fr.nicos.allomairieapp.ui.profile.editProfile.api.UserAPI;
+import fr.nicos.allomairieapp.ui.profile.editProfile.model.User;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserViewModel extends BaseObservable {
     private User user;
@@ -69,13 +76,35 @@ public class UserViewModel extends BaseObservable {
     }
 
     public void sendFormData(Boolean isValid) {
-
         System.out.println("Datas >> " + this.getUserEmail());
 
-        if(isValid) {
-            setToastMessage(successMessage);
-        } else {
-            setToastMessage(errorMessage);
-        }
+        // https://stackoverflow.com/a/42155739
+
+        UserAPI userAPI = NetworkHandler.getRetrofit().create(UserAPI.class);
+
+        Call<List<User>> call = userAPI.getUsers();
+        call.enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                if(response.isSuccessful()) {
+                    List<User> changesList = response.body();
+
+                    changesList.forEach(change -> System.out.println("Prénom >>> "+change.getFirstName()));
+
+                    setToastMessage(successMessage);
+                } else {
+                    System.out.println(response.errorBody());
+
+                    setToastMessage(errorMessage);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+                t.printStackTrace();
+
+                setToastMessage(errorMessage);
+            }
+        });
     }
 }

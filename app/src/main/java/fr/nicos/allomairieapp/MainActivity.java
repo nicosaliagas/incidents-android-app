@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startIncidentActivity(View view) {
-        Intent intent = new Intent(this, IncidentActivity.class);
+        Intent intent = new Intent(this, ProfileActivity.class);
         startActivity(intent);
     }
 
