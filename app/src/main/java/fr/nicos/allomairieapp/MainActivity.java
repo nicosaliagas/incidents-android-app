@@ -15,6 +15,8 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
+import fr.nicos.allomairieapp.database.MyAppDatabase;
+import fr.nicos.allomairieapp.database.singleton.DatabaseSingleton;
 import fr.nicos.allomairieapp.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
@@ -45,6 +47,9 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+
+        /** Instancie la base de donnée local */
+        MyAppDatabase db = DatabaseSingleton.getInstance(getApplicationContext());
     }
 
     @Override

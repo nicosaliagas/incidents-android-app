@@ -6,7 +6,6 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,28 +13,32 @@ import androidx.annotation.Nullable;
 import androidx.databinding.BindingAdapter;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.textfield.TextInputLayout;
+import java.util.List;
 
 import fr.nicos.allomairieapp.R;
-import fr.nicos.allomairieapp.databinding.FragmentEditProfileBinding;
 import fr.nicos.allomairieapp.core.validation.FieldValidators;
+import fr.nicos.allomairieapp.database.MyAppDatabase;
+import fr.nicos.allomairieapp.database.dao.UserDao;
+import fr.nicos.allomairieapp.database.entity.User;
+import fr.nicos.allomairieapp.database.singleton.DatabaseSingleton;
+import fr.nicos.allomairieapp.databinding.FragmentEditProfileBinding;
 import fr.nicos.allomairieapp.ui.profile.editProfile.viewModels.UserViewModel;
 
 public class EditProfileFragment extends Fragment {
 
-    //private FormIncidentViewModel mViewModel;
     private UserViewModel mViewModel;
-    private EditText firstNameText;
-    private EditText lastNameText;
-    private EditText phoneText;
-    private EditText emailText;
-    private TextInputLayout emailTextLayout;
 
     private FragmentEditProfileBinding binding;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
+        /** Instancie la base de donnée local */
+        MyAppDatabase db = DatabaseSingleton.getInstance(requireContext());
+
+        UserDao userDao = db.userDao();
+        List<User> users = userDao.getAll();
 
         mViewModel = new UserViewModel();
 
@@ -44,8 +47,6 @@ public class EditProfileFragment extends Fragment {
         binding.executePendingBindings();
 
         setupListeners();
-
-
 
         return binding.getRoot();
     }
@@ -57,7 +58,9 @@ public class EditProfileFragment extends Fragment {
         binding.validateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mViewModel.sendFormData(isValidate());
+                if(isValidate()) {
+                    mViewModel.sendFormData();
+                }
             }
         });
     }

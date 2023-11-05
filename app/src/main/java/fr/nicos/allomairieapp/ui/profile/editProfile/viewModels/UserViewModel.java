@@ -75,15 +75,16 @@ public class UserViewModel extends BaseObservable {
         return user.getPhone();
     }
 
-    public void sendFormData(Boolean isValid) {
+    public void sendFormData() {
         System.out.println("Datas >> " + this.getUserEmail());
 
         // https://stackoverflow.com/a/42155739
 
         UserAPI userAPI = NetworkHandler.getRetrofit().create(UserAPI.class);
 
-        Call<List<User>> call = userAPI.getUsers();
-        call.enqueue(new Callback<List<User>>() {
+        Call<List<User>> callApi = userAPI.getUsers();
+
+        callApi.enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 if(response.isSuccessful()) {
