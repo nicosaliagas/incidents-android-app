@@ -1,6 +1,8 @@
 package fr.nicos.allomairieapp.ui.profile.editProfile;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -14,11 +16,12 @@ import androidx.databinding.BindingAdapter;
 import androidx.fragment.app.Fragment;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import fr.nicos.allomairieapp.R;
 import fr.nicos.allomairieapp.core.validation.FieldValidators;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
-import fr.nicos.allomairieapp.database.dao.UserDao;
 import fr.nicos.allomairieapp.database.entity.User;
 import fr.nicos.allomairieapp.database.singleton.DatabaseSingleton;
 import fr.nicos.allomairieapp.databinding.FragmentEditProfileBinding;
@@ -30,15 +33,14 @@ public class EditProfileFragment extends Fragment {
 
     private FragmentEditProfileBinding binding;
 
+    MyAppDatabase myAppDatabase;
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        /** Instancie la base de donnée local */
-        MyAppDatabase db = DatabaseSingleton.getInstance(requireContext());
-
-        UserDao userDao = db.userDao();
-        List<User> users = userDao.getAll();
+        /** Instancation de la base de donnée local */
+        myAppDatabase = DatabaseSingleton.getInstance(requireContext());
 
         mViewModel = new UserViewModel();
 
@@ -47,6 +49,8 @@ public class EditProfileFragment extends Fragment {
         binding.executePendingBindings();
 
         setupListeners();
+
+        getActivity().setTitle("Edit Profile");
 
         return binding.getRoot();
     }
@@ -58,9 +62,60 @@ public class EditProfileFragment extends Fragment {
         binding.validateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                User user = new User();
+                user.setFirstName("Nicos");
+                user.setLastName("Aliagas");
+
+                addUserInBackground(user);
+
                 if(isValidate()) {
                     mViewModel.sendFormData();
+
+                    getUsersInBackground();
                 }
+            }
+        });
+    }
+
+    public void addUserInBackground(User user) {
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                myAppDatabase.userDao().addUser(user);
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(requireContext(), "Yoyoyo New User !!", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+    }
+
+    public void getUsersInBackground() {
+
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executorService.execute(new Runnable() {
+            @Override
+            public void run() {
+                List<User> users = myAppDatabase.userDao().getAll();
+
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        users.forEach(user -> {
+                            System.out.println("Loaded User >>> " + user.getFirstName());
+                        });
+                    }
+                });
             }
         });
     }

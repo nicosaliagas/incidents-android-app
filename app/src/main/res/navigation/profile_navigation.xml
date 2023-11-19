@@ -3,7 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/incident_navigation"
-    app:startDestination="@id/formIncidentFragment">
+    app:startDestination="@id/pageProfileFragment">
+
+    <fragment
+        android:id="@+id/pageProfileFragment"
+        android:name="fr.nicos.allomairieapp.ui.profile.pageProfile.PageProfileFragment"
+        android:label="Profile"
+        tools:layout="@layout/fragment_page_profile" >
+        <action
+            android:id="@+id/action_pageProfileFragment_to_formIncidentFragment"
+            app:destination="@id/formIncidentFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/formIncidentFragment"

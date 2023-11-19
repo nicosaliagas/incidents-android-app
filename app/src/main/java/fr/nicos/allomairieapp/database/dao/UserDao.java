@@ -14,8 +14,11 @@ public interface UserDao {
     @Query("SELECT * FROM user")
     List<User> getAll();
 
+    @Query("DELETE FROM user")
+    void nukeUserTable();
+
     @Insert
-    void insertAll(User... users);
+    public void addUser(User user);
 
     @Delete
     void delete(User user);

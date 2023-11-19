@@ -2,7 +2,7 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/mobile_navigation"
+    android:id="@+id/main_navigation"
     app:startDestination="@+id/nav_home">
 
     <fragment
@@ -20,6 +20,12 @@
         android:name="fr.nicos.allomairieapp.ui.gallery.GalleryFragment"
         android:label="@string/menu_gallery"
         tools:layout="@layout/fragment_gallery" />
+
+    <fragment
+        android:id="@+id/nav_profile"
+        android:name="fr.nicos.allomairieapp.ui.profile.pageProfile.PageProfileFragment"
+        android:label="@string/menu_profile"
+        tools:layout="@layout/fragment_page_profile" />
 
     <fragment
         android:id="@+id/nav_slideshow"
