@@ -60,7 +60,12 @@ public class PageProfileFragment extends Fragment {
             public void onClick(View view) {
 
                 // Dans le fragment actuel
-                Navigation.findNavController(view).navigate(R.id.action_pageProfileFragment_to_formIncidentFragment);
+                Navigation.findNavController(getView()).navigate(R.id.action_nav_profile_to_nav_edit_profile);
+
+                String transactionName = "pageProfileToEditProfile";
+                getParentFragmentManager().beginTransaction()
+                        .addToBackStack(transactionName)
+                        .commit();
 
                 /*NavDirections action = fr.nicos.allomairieapp.ui.home.HomeFragmentDirections.actionNavHomeToNavFragmentSecond(currentCount);
 

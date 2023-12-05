@@ -1,12 +1,12 @@
 package fr.nicos.allomairieapp;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,6 +25,11 @@ public class MainActivity extends AppCompatActivity {
 
     MyAppDatabase myAppDatabase;
 
+    NavController navController;
+
+    // Menu de navigation
+    DrawerLayout drawer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,15 +42,16 @@ public class MainActivity extends AppCompatActivity {
 
         setupListeners();
 
-        DrawerLayout drawer = binding.drawerLayout;
+        drawer = binding.drawerLayout;
+
         NavigationView navigationView = binding.navView;
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_profile)
+                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow)
                 .setOpenableLayout(drawer)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
@@ -64,11 +70,6 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-    private void startProfileActivity(View view) {
-        Intent intent = new Intent(this, ProfileActivity.class);
-        startActivity(intent);
-    }
-
     private void setupListeners() {
         // View headerview = binding.navView.getHeaderView(0);
         // headerview.findViewById(R.id.profileImageView).setOnClickListener
@@ -77,7 +78,11 @@ public class MainActivity extends AppCompatActivity {
         binding.navView.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startProfileActivity(view);
+                if (drawer.isDrawerOpen(GravityCompat.START)) {
+                    drawer.closeDrawer(GravityCompat.START);
+                }
+                navController.navigateUp();
+                navController.navigate(R.id.nav_profile);
             }
         });
 
