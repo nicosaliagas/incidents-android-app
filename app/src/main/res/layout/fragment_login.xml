@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="LoginViewModel"
+            type="fr.nicos.allomairieapp.ui.login.LoginViewModel" />
+    </data>
+
+    <android.widget.ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".View.MainActivity">
+
+            <TextView
+                android:id="@+id/lblLoginTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="8dp"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/welcome_login"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtEmailAddress"
+                style="@style/TextInputLayoutStyle"
+                android:layout_marginTop="50dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintEnabled="false"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lblLoginTitle">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_email_icon"
+                    android:drawablePadding="8dp"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:singleLine="true"
+                    android:text="@={LoginViewModel.EmailAddress}" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtPassword"
+                style="@style/TextInputLayoutStyle"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintEnabled="false"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtEmailAddress">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/passwordText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@={LoginViewModel.Password}"
+                    android:singleLine="true"
+                    android:drawableStart="@drawable/ic_password_icon"
+                    android:drawablePadding="8dp"
+                    android:hint="Mot de passe"
+                    android:inputType="textPassword"
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <Button
+                style="@style/ButtonStyle"
+                android:id="@+id/btnLogin"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:onClick="@{(v) -> LoginViewModel.onClick(v)}"
+                android:text="Se connecter"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtPassword" />
+
+            <Button
+                android:id="@+id/btnRegister"
+                style="@style/ButtonStyle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="32dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:text="S'enregistrer"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/btnLogin" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </android.widget.ScrollView>
+</layout>

@@ -1,5 +1,6 @@
 package fr.nicos.allomairieapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
@@ -42,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         setupListeners();
 
+        redirectToWelcomePageIfUserNotAuthenticated();
+
         drawer = binding.drawerLayout;
 
         NavigationView navigationView = binding.navView;
@@ -54,6 +57,19 @@ public class MainActivity extends AppCompatActivity {
         navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    private void redirectToWelcomePageIfUserNotAuthenticated() {
+        if (!isUserAuthenticated()) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        }
+    }
+
+    private boolean isUserAuthenticated() {
+        // Ajouter la logique pour vérifier l'authentification de l'utilisateur
+        // Retourner true si l'utilisateur est authentifié, sinon false
+        return false; // À remplacer par votre logique d'authentification
     }
 
     @Override

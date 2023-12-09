@@ -14,6 +14,9 @@ public interface UserDao {
     @Query("SELECT * FROM user")
     List<User> getAll();
 
+    @Query("SELECT * FROM user WHERE email = :email")
+    User getUserByEmail(String email);
+
     @Query("DELETE FROM user")
     void nukeUserTable();
 

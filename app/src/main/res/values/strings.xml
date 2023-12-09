@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">AlloMairie</string>
-    <string name="activity_profile">Profile</string>
 
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">Nicos Aliagas</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
@@ -15,12 +12,24 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="toast_button_text">Toast</string>
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="random_heading">Here is a random number between 0 and %d.</string>
     <string name="content_description_end_icon_firstname">Description a compléter</string>
     <string name="validate_button_text">Valider</string>
     <string name="cancel_button_text">Annuler</string>
     <!-- Validators -->
     <string name="validator_field_required">Le champ %s est requis</string>
-    <string name="validator_field_no_valid">%s non valide</string>
+    <string name="validator_field_no_valid">Le champ %s n\'est pas valide</string>
+    <string name="user_connected_preference_key">USER_CONNECTED</string>
+    <!-- Strings related to login -->
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Se connecter</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="action_register">Créer un compte</string>
+
+    <!-- Sync Preferences -->
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="welcome_login">Bonjour et bon retour !</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

@@ -1,8 +1,11 @@
 package fr.nicos.allomairieapp.ui.profile.pageProfile;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +14,6 @@ import android.widget.Toast;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.Navigation;
 
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -27,6 +29,8 @@ public class PageProfileFragment extends Fragment {
 
     private FragmentPageProfileBinding binding;
 
+    private User userProfil;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -37,13 +41,25 @@ public class PageProfileFragment extends Fragment {
         binding = FragmentPageProfileBinding.inflate(inflater, container, false);
         // binding.executePendingBindings();
 
-        getUsersInBackground();
+        getSharedPreference();
 
         setupListeners();
 
         // Inflate the layout for this fragment
         // return inflater.inflate(R.layout.fragment_page_profile, container, false);
         return binding.getRoot();
+    }
+
+    private void getSharedPreference() {
+        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+
+        String userEmail = sharedPref.getString(String.valueOf(R.string.user_connected_preference_key), null);
+
+        System.out.println("userEmail >>> " + userEmail);
+
+        if(!TextUtils.isEmpty(userEmail)) {
+            getUserConnectedInBackground(userEmail);
+        }
     }
 
     private void setupListeners() {
@@ -85,22 +101,19 @@ public class PageProfileFragment extends Fragment {
         });
     }
 
-    private void getUsersInBackground() {
-
+    private void getUserConnectedInBackground(String userEmail) {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
         executorService.execute(new Runnable() {
             @Override
             public void run() {
-                List<User> users = myAppDatabase.userDao().getAll();
+                User user = myAppDatabase.userDao().getUserByEmail(userEmail);
 
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        users.forEach(user -> {
-                            System.out.println("Loaded User >>> " + user.getFirstName());
-                        });
+                        System.out.println("Loaded User >>> " + user.getFirstName());
                     }
                 });
             }
