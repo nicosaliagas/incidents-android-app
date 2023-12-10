@@ -30,7 +30,6 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         ViewModelProvider viewModelProvider = new ViewModelProvider(this);
 
         loginViewModel = viewModelProvider.get(LoginViewModel.class);
