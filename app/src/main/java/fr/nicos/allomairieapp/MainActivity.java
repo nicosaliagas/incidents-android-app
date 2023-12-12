@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +17,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
+import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
 import fr.nicos.allomairieapp.databinding.ActivityMainBinding;
 
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
+    private LoginSharedPreferenceManager loginSharedPreferenceManager;
+
     MyAppDatabase myAppDatabase;
 
     NavController navController;
@@ -31,9 +35,12 @@ public class MainActivity extends AppCompatActivity {
     // Menu de navigation
     DrawerLayout drawer;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
@@ -41,9 +48,11 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
+        redirectToWelcomePageIfNotAuthenticated();
+
         setupListeners();
 
-        redirectToWelcomePageIfUserNotAuthenticated();
+        initInfosUserAuthenticated();
 
         drawer = binding.drawerLayout;
 
@@ -59,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
-    private void redirectToWelcomePageIfUserNotAuthenticated() {
+    private void redirectToWelcomePageIfNotAuthenticated() {
         if (!isUserAuthenticated()) {
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -67,9 +76,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isUserAuthenticated() {
-        // Ajouter la logique pour vérifier l'authentification de l'utilisateur
-        // Retourner true si l'utilisateur est authentifié, sinon false
-        return false; // À remplacer par votre logique d'authentification
+        return loginSharedPreferenceManager.getEmailAddress() != null && loginSharedPreferenceManager.getLastName() != null && loginSharedPreferenceManager.getLastName() != null;
+    }
+
+    private void initInfosUserAuthenticated() {
+        TextView headerFirstNameUser = binding.navView.getHeaderView(0).findViewById(R.id.header_firstNameUser);
+        headerFirstNameUser.setText(loginSharedPreferenceManager.getFirstName());
+
+        TextView headerEmailAddressUser = binding.navView.getHeaderView(0).findViewById(R.id.header_emailAddressUser);
+        headerEmailAddressUser.setText(loginSharedPreferenceManager.getEmailAddress());
     }
 
     @Override
@@ -90,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         // View headerview = binding.navView.getHeaderView(0);
         // headerview.findViewById(R.id.profileImageView).setOnClickListener
 
-        /** Header menu navigation */
+        /** Header du menu navigation, Zone avatar profil */
         binding.navView.getHeaderView(0).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

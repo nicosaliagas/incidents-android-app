@@ -1,6 +1,7 @@
 package fr.nicos.allomairieapp.ui.profile.pageProfile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -9,6 +10,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -17,7 +19,9 @@ import androidx.navigation.Navigation;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import fr.nicos.allomairieapp.LoginActivity;
 import fr.nicos.allomairieapp.R;
+import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
 import fr.nicos.allomairieapp.database.entity.User;
 import fr.nicos.allomairieapp.database.singleton.DatabaseSingleton;
@@ -31,6 +35,8 @@ public class PageProfileFragment extends Fragment {
 
     private User userProfil;
 
+    private LoginSharedPreferenceManager loginSharedPreferenceManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -41,13 +47,22 @@ public class PageProfileFragment extends Fragment {
         binding = FragmentPageProfileBinding.inflate(inflater, container, false);
         // binding.executePendingBindings();
 
+        loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(getActivity());
+
         getSharedPreference();
 
         setupListeners();
 
+        initInfosUserAuthenticated();
+
         // Inflate the layout for this fragment
         // return inflater.inflate(R.layout.fragment_page_profile, container, false);
         return binding.getRoot();
+    }
+
+    private void initInfosUserAuthenticated() {
+        TextView profilIdentity = binding.profilIdentity;
+        profilIdentity.setText(loginSharedPreferenceManager.getLastName() + " " + loginSharedPreferenceManager.getFirstName());
     }
 
     private void getSharedPreference() {
@@ -64,10 +79,12 @@ public class PageProfileFragment extends Fragment {
 
     private void setupListeners() {
         // Source : https://dev.to/mustufa786/textinputlayout-form-validation-using-data-binding-in-android-8gf
-        binding.resetProfileButton.setOnClickListener(new View.OnClickListener() {
+        binding.actionLogoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                resetProfileInBackground();
+                logout();
+
+                redirectToLoginActivity();
             }
         });
 
@@ -99,6 +116,18 @@ public class PageProfileFragment extends Fragment {
                 transaction.commit();*/
             }
         });
+    }
+
+    private void logout() {
+        loginSharedPreferenceManager.setLastName(null);
+        loginSharedPreferenceManager.setFirstName(null);
+        loginSharedPreferenceManager.setEmailAddress(null);
+    }
+
+    private void redirectToLoginActivity() {
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     private void getUserConnectedInBackground(String userEmail) {

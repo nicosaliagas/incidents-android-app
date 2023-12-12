@@ -24,7 +24,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/profile_identity"
+                android:id="@+id/profil_identity"
                 android:text="Aliagas Nicos"
                 android:textSize="24sp" />
 
@@ -40,12 +40,12 @@
         </TableLayout>
 
         <Button
-            android:id="@+id/resetProfileButton"
+            android:id="@+id/actionLogoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:backgroundTint="@color/md_theme_light_primary"
-            android:text="Reset Profile"
+            android:text="@string/action_logout"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.905"
             app:layout_constraintStart_toStartOf="parent"

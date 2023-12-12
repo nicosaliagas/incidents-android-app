@@ -1,6 +1,7 @@
 package fr.nicos.allomairieapp.ui.login;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,9 +18,16 @@ import androidx.navigation.Navigation;
 
 import java.util.Objects;
 
+import fr.nicos.allomairieapp.MainActivity;
 import fr.nicos.allomairieapp.R;
+import fr.nicos.allomairieapp.core.api.NetworkHandler;
+import fr.nicos.allomairieapp.core.api.UserApi;
 import fr.nicos.allomairieapp.core.models.LoginUser;
+import fr.nicos.allomairieapp.core.models.User;
 import fr.nicos.allomairieapp.databinding.FragmentLoginBinding;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginFragment extends Fragment {
 
@@ -54,7 +62,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onChanged(@Nullable LoginUser loginUser) {
                 if(isFormValid(loginUser)) {
-                    Toast.makeText(requireContext(), "Login avec succès !", Toast.LENGTH_SHORT).show();
+                    authUser(loginUser);
                 }
             }
         });
@@ -70,8 +78,6 @@ public class LoginFragment extends Fragment {
                 getParentFragmentManager().beginTransaction()
                         .addToBackStack(transactionName)
                         .commit();
-
-                Toast.makeText(requireContext(), "Go to register page !", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -81,7 +87,7 @@ public class LoginFragment extends Fragment {
         String emailField = "Email";
         String passwordField = "Mot de passe";
 
-        if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).getStrEmailAddress())) {
+        if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).getEmailAddress())) {
             binding.txtEmailAddress.setError(getString(R.string.validator_field_required, emailField));
             binding.txtEmailAddress.requestFocus();
 
@@ -96,7 +102,7 @@ public class LoginFragment extends Fragment {
             binding.txtEmailAddress.setErrorEnabled(false);
         }
 
-        if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).getStrPassword())) {
+        if (TextUtils.isEmpty(Objects.requireNonNull(loginUser).getPassword())) {
             binding.txtPassword.setError(getString(R.string.validator_field_required, passwordField));
             binding.txtPassword.requestFocus();
 
@@ -116,14 +122,55 @@ public class LoginFragment extends Fragment {
     }
 
     private void getSharedPreference() {
-        SharedPreferences sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(String.valueOf(R.string.user_connected_preference_key), Context.MODE_PRIVATE);
 
-        String userEmail = sharedPref.getString(String.valueOf(R.string.user_connected_preference_key), null);
+        String firstName = sharedPreferences.getString("firstName", null);
+        String lastName = sharedPreferences.getString("lastName", null);
+        String emailAddress = sharedPreferences.getString("emailAddress", null);
 
-        System.out.println("userEmail >>> " + userEmail);
+        System.out.println("getSharedPreference >> " + emailAddress);
+    }
 
-        if(!TextUtils.isEmpty(userEmail)) {
+    private void setSharedPreference(User user) {
+        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(String.valueOf(R.string.user_connected_preference_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("firstName", user.getFirstName() );
+        editor.putString("lastName", user.getLastName());
+        editor.putString("emailAddress", user.getEmailAddress());
+        editor.commit();
+    }
 
-        }
+    private void authUser(LoginUser loginUser) {
+        UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
+
+        Call<User> callApi = userApi.authenticateUser(loginUser);
+
+        callApi.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()) {
+                    User userAuthenticated = response.body();
+
+                    setSharedPreference(userAuthenticated);
+
+                    redirectToMainActivity();
+
+                    Toast.makeText(requireContext(), "Connecté avec succès !", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(requireContext(), "Failed to connect !", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
+
+    private void redirectToMainActivity() {
+        Intent intent = new Intent(getActivity(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 }

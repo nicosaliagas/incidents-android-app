@@ -11,13 +11,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import java.util.Objects;
 
 import fr.nicos.allomairieapp.LoginActivity;
 import fr.nicos.allomairieapp.R;
-import fr.nicos.allomairieapp.core.models.RegisterUser;
+import fr.nicos.allomairieapp.core.api.NetworkHandler;
+import fr.nicos.allomairieapp.core.api.UserApi;
+import fr.nicos.allomairieapp.core.models.User;
 import fr.nicos.allomairieapp.databinding.FragmentRegisterBinding;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class RegisterFragment extends Fragment {
 
@@ -48,28 +54,28 @@ public class RegisterFragment extends Fragment {
     }
 
     private void observeViewModelUser() {
-        registerViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<RegisterUser>() {
+        registerViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
-            public void onChanged(@Nullable RegisterUser registerUser) {
-                if(isFormValid(registerUser)) {
-                    Toast.makeText(requireContext(), "Register user avec succès !", Toast.LENGTH_SHORT).show();
+            public void onChanged(@Nullable User user) {
+                if(isFormValid(user)) {
+                    postUser(user);
                 }
             }
         });
     }
 
-    private boolean isFormValid(RegisterUser registerUser) {
+    private boolean isFormValid(User user) {
         boolean isValid = true;
         String emailField = "Email";
         String passwordField = "Mot de passe";
 
-        if (TextUtils.isEmpty(Objects.requireNonNull(registerUser).getStrEmailAddress())) {
+        if (TextUtils.isEmpty(Objects.requireNonNull(user).getEmailAddress())) {
             binding.txtEmailAddress.setError(getString(R.string.validator_field_required, emailField));
             binding.txtEmailAddress.requestFocus();
 
             isValid = false;
         }
-        else if (!registerUser.isEmailValid()) {
+        else if (!user.isEmailValid()) {
             binding.txtEmailAddress.setError(getString(R.string.validator_field_no_valid, emailField));
             binding.txtEmailAddress.requestFocus();
 
@@ -78,13 +84,13 @@ public class RegisterFragment extends Fragment {
             binding.txtEmailAddress.setErrorEnabled(false);
         }
 
-        if (TextUtils.isEmpty(Objects.requireNonNull(registerUser).getStrPassword())) {
+        if (TextUtils.isEmpty(Objects.requireNonNull(user).getPassword())) {
             binding.txtPassword.setError(getString(R.string.validator_field_required, passwordField));
             binding.txtPassword.requestFocus();
 
             isValid = false;
         }
-        else if (!registerUser.isPasswordLengthGreaterThan5()) {
+        else if (!user.isPasswordLengthGreaterThan5()) {
             binding.txtPassword.setError("Le " + passwordField + " doit contenir au moins 6 caractères");
             binding.txtPassword.requestFocus();
 
@@ -99,5 +105,36 @@ public class RegisterFragment extends Fragment {
 
     private void setupListeners() {
 
+    }
+
+    private void postUser(User user) {
+        UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
+
+        Call<User> callApi = userApi.postUser(user);
+
+        callApi.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()) {
+                    User userRegistred = response.body();
+
+                    Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
+
+                    String transactionName = "pageRegisterToLogin";
+                    getParentFragmentManager().beginTransaction()
+                            .addToBackStack(transactionName)
+                            .commit();
+
+                    Toast.makeText(requireContext(), "Compte créé avec succès !", Toast.LENGTH_SHORT).show();
+                } else {
+                    System.out.println(response.errorBody());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 }

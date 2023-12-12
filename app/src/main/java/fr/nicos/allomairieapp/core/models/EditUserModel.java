@@ -1,6 +1,6 @@
 package fr.nicos.allomairieapp.core.models;
 
-public class UserModel {
+public class EditUserModel {
     private String email;
     private String password;
 

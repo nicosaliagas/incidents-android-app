@@ -2,14 +2,26 @@ package fr.nicos.allomairieapp.core.models;
 
 import android.util.Patterns;
 
-public class LoginUser {
+public class User {
 
+    private String firstName;
+    private String lastName;
     private String emailAddress;
     private String password;
 
-    public LoginUser(String EmailAddress, String Password) {
+    public User(String FirstName, String LastName, String EmailAddress, String Password) {
+        firstName = FirstName;
+        lastName = LastName;
         emailAddress = EmailAddress;
         password = Password;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
     }
 
     public String getEmailAddress() {
