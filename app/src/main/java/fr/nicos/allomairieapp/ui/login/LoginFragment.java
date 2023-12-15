@@ -1,8 +1,6 @@
 package fr.nicos.allomairieapp.ui.login;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -24,6 +22,7 @@ import fr.nicos.allomairieapp.core.api.NetworkHandler;
 import fr.nicos.allomairieapp.core.api.UserApi;
 import fr.nicos.allomairieapp.core.models.LoginUser;
 import fr.nicos.allomairieapp.core.models.User;
+import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
 import fr.nicos.allomairieapp.databinding.FragmentLoginBinding;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -34,7 +33,7 @@ public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
 
     private LoginViewModel loginViewModel;
-
+    private LoginSharedPreferenceManager loginSharedPreferenceManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,11 +47,11 @@ public class LoginFragment extends Fragment {
 
         binding.setLoginViewModel(loginViewModel);
 
+        loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(getActivity());
+
         this.observeViewModelUser();
 
         this.setupListeners();
-
-        getSharedPreference();
 
         return binding.getRoot();
     }
@@ -121,23 +120,14 @@ public class LoginFragment extends Fragment {
         return isValid;
     }
 
-    private void getSharedPreference() {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(String.valueOf(R.string.user_connected_preference_key), Context.MODE_PRIVATE);
-
-        String firstName = sharedPreferences.getString("firstName", null);
-        String lastName = sharedPreferences.getString("lastName", null);
-        String emailAddress = sharedPreferences.getString("emailAddress", null);
-
-        System.out.println("getSharedPreference >> " + emailAddress);
-    }
-
     private void setSharedPreference(User user) {
-        SharedPreferences sharedPreferences = getActivity().getSharedPreferences(String.valueOf(R.string.user_connected_preference_key), Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("firstName", user.getFirstName() );
-        editor.putString("lastName", user.getLastName());
-        editor.putString("emailAddress", user.getEmailAddress());
-        editor.commit();
+        System.out.println("setSharedPreference");
+        System.out.println(user);
+
+        loginSharedPreferenceManager.setUserId(user.getId());
+        loginSharedPreferenceManager.setLastName(user.getLastName());
+        loginSharedPreferenceManager.setFirstName(user.getFirstName());
+        loginSharedPreferenceManager.setEmailAddress(user.getEmailAddress());
     }
 
     private void authUser(LoginUser loginUser) {

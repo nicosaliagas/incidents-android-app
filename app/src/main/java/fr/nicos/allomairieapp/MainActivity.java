@@ -10,6 +10,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -17,9 +18,16 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.navigation.NavigationView;
 
+import fr.nicos.allomairieapp.core.api.NetworkHandler;
+import fr.nicos.allomairieapp.core.api.UserApi;
+import fr.nicos.allomairieapp.core.models.User;
 import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
 import fr.nicos.allomairieapp.databinding.ActivityMainBinding;
+import fr.nicos.allomairieapp.ui.register.RegisterViewModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
 
     private LoginSharedPreferenceManager loginSharedPreferenceManager;
+
+    private RegisterViewModel registerViewModel;
 
     MyAppDatabase myAppDatabase;
 
@@ -41,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(this);
+
+        ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+
+        registerViewModel = viewModelProvider.get(RegisterViewModel.class);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
@@ -85,6 +99,31 @@ public class MainActivity extends AppCompatActivity {
 
         TextView headerEmailAddressUser = binding.navView.getHeaderView(0).findViewById(R.id.header_emailAddressUser);
         headerEmailAddressUser.setText(loginSharedPreferenceManager.getEmailAddress());
+
+        /** On interroge le back pour charger l'objet User */
+        getUserInformations();
+    }
+
+    private void getUserInformations() {
+        UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
+
+        Call<User> callApi = userApi.getUser(loginSharedPreferenceManager.getUserId());
+
+        callApi.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()) {
+                    User userAuthenticated = response.body();
+
+                    registerViewModel.setUser(userAuthenticated);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
     }
 
     @Override

@@ -119,6 +119,7 @@ public class PageProfileFragment extends Fragment {
     }
 
     private void logout() {
+        loginSharedPreferenceManager.setUserId(0);
         loginSharedPreferenceManager.setLastName(null);
         loginSharedPreferenceManager.setFirstName(null);
         loginSharedPreferenceManager.setEmailAddress(null);

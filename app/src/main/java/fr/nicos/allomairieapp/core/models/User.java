@@ -4,6 +4,7 @@ import android.util.Patterns;
 
 public class User {
 
+    private int id;
     private String firstName;
     private String lastName;
     private String emailAddress;
@@ -16,9 +17,8 @@ public class User {
         password = Password;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
+    public int getId() {return id; }
+    public String getLastName() {return lastName; }
 
     public String getFirstName() {
         return firstName;

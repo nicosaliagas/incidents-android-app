@@ -10,6 +10,7 @@ public class LoginSharedPreferenceManager {
     private static LoginSharedPreferenceManager instance;
     private SharedPreferences sharedPreferences;
 
+    private int id;
     private String firstName;
     private String lastName;
     private String emailAddress;
@@ -23,6 +24,19 @@ public class LoginSharedPreferenceManager {
             instance = new LoginSharedPreferenceManager(context);
         }
         return instance;
+    }
+
+    public int getUserId() {
+        if (id == 0) {
+            id = sharedPreferences.getInt("id", 0);
+        }
+        return id;
+    }
+
+    public void setUserId(int id) {
+        sharedPreferences.edit().putInt("id", id).apply();
+
+        id = id;
     }
 
     public String getFirstName() {

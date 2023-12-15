@@ -24,6 +24,13 @@ public class RegisterViewModel extends ViewModel {
         return userMutableLiveData;
     }
 
+    public void setUser(User user) {
+        FirstName.setValue(user.getFirstName());
+        LastName.setValue(user.getLastName());
+        EmailAddress.setValue(user.getEmailAddress());
+        Password.setValue(user.getPassword());
+    }
+
     public void onClick(View view) {
         User user = new User(FirstName.getValue(), LastName.getValue(), EmailAddress.getValue(), Password.getValue());
 
