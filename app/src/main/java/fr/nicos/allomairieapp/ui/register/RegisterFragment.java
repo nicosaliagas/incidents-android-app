@@ -20,6 +20,7 @@ import fr.nicos.allomairieapp.R;
 import fr.nicos.allomairieapp.core.api.NetworkHandler;
 import fr.nicos.allomairieapp.core.api.UserApi;
 import fr.nicos.allomairieapp.core.models.User;
+import fr.nicos.allomairieapp.core.viewModel.UserViewModel;
 import fr.nicos.allomairieapp.databinding.FragmentRegisterBinding;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -29,7 +30,7 @@ public class RegisterFragment extends Fragment {
 
     private FragmentRegisterBinding binding;
 
-    private RegisterViewModel registerViewModel;
+    private UserViewModel userViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -38,13 +39,13 @@ public class RegisterFragment extends Fragment {
 
         ((LoginActivity) getActivity()).setActionBarTitle("Nouveau compte");
 
-        registerViewModel = viewModelProvider.get(RegisterViewModel.class);
+        userViewModel = viewModelProvider.get(UserViewModel.class);
 
         binding = FragmentRegisterBinding.inflate(inflater, container, false);
 
         binding.setLifecycleOwner(this);
 
-        binding.setRegisterViewModel(registerViewModel);
+        binding.setUserViewModel(userViewModel);
 
         this.observeViewModelUser();
 
@@ -54,7 +55,7 @@ public class RegisterFragment extends Fragment {
     }
 
     private void observeViewModelUser() {
-        registerViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
+        userViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
                 if(isFormValid(user)) {

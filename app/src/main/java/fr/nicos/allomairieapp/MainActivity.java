@@ -24,7 +24,7 @@ import fr.nicos.allomairieapp.core.models.User;
 import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
 import fr.nicos.allomairieapp.databinding.ActivityMainBinding;
-import fr.nicos.allomairieapp.ui.register.RegisterViewModel;
+import fr.nicos.allomairieapp.core.viewModel.UserViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LoginSharedPreferenceManager loginSharedPreferenceManager;
 
-    private RegisterViewModel registerViewModel;
+    private UserViewModel userViewModel;
 
     MyAppDatabase myAppDatabase;
 
@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
 
         ViewModelProvider viewModelProvider = new ViewModelProvider(this);
 
-        registerViewModel = viewModelProvider.get(RegisterViewModel.class);
+        userViewModel = viewModelProvider.get(UserViewModel.class);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
 
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
                 if(response.isSuccessful()) {
                     User userAuthenticated = response.body();
 
-                    registerViewModel.setUser(userAuthenticated);
+                    userViewModel.setUser(userAuthenticated);
                 }
             }
 

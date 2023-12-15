@@ -1,4 +1,4 @@
-package fr.nicos.allomairieapp.ui.register;
+package fr.nicos.allomairieapp.core.viewModel;
 
 import android.view.View;
 
@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel;
 
 import fr.nicos.allomairieapp.core.models.User;
 
-public class RegisterViewModel extends ViewModel {
+public class UserViewModel extends ViewModel {
 
     public MutableLiveData<String> FirstName = new MutableLiveData<>();
     public MutableLiveData<String> LastName = new MutableLiveData<>();

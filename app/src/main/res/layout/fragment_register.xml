@@ -5,8 +5,8 @@
 
     <data>
         <variable
-            name="RegisterViewModel"
-            type="fr.nicos.allomairieapp.ui.register.RegisterViewModel" />
+            name="UserViewModel"
+            type="fr.nicos.allomairieapp.core.viewModel.UserViewModel" />
     </data>
 
     <android.widget.ScrollView
@@ -58,7 +58,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:singleLine="true"
-                    android:text="@={RegisterViewModel.FirstName}" />
+                    android:text="@={UserViewModel.FirstName}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -81,7 +81,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:singleLine="true"
-                    android:text="@={RegisterViewModel.LastName}" />
+                    android:text="@={UserViewModel.LastName}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -105,7 +105,7 @@
                     android:paddingStart="8dp"
                     android:paddingEnd="8dp"
                     android:singleLine="true"
-                    android:text="@={RegisterViewModel.EmailAddress}" />
+                    android:text="@={UserViewModel.EmailAddress}" />
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -122,7 +122,7 @@
                     android:id="@+id/passwordText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@={RegisterViewModel.Password}"
+                    android:text="@={UserViewModel.Password}"
                     android:singleLine="true"
                     android:drawableStart="@drawable/ic_password_icon"
                     android:drawablePadding="8dp"
@@ -140,7 +140,7 @@
                 android:layout_marginStart="32dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="32dp"
-                android:onClick="@{(v) -> RegisterViewModel.onClick(v)}"
+                android:onClick="@{(v) -> UserViewModel.onClick(v)}"
                 android:text="Créer son compte"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
