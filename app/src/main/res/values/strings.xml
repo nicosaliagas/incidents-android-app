@@ -31,5 +31,6 @@
     <string name="title_activity_login">LoginActivity</string>
     <string name="welcome_login">Bienvenue</string>
     <string name="action_logout">Se déconnecter</string>
-    <string name="register_title">Je créer mon compte !</string>
+    <string name="register_title">Nouveau compte</string>
+    <string name="edit_profile_title">Mon profil</string>
 </resources>

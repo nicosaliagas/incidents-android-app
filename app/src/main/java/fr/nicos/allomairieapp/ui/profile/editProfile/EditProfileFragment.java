@@ -1,10 +1,6 @@
 package fr.nicos.allomairieapp.ui.profile.editProfile;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,178 +8,120 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.databinding.BindingAdapter;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
+import fr.nicos.allomairieapp.MainActivity;
 import fr.nicos.allomairieapp.R;
-import fr.nicos.allomairieapp.core.validation.FieldValidators;
-import fr.nicos.allomairieapp.database.MyAppDatabase;
-import fr.nicos.allomairieapp.database.entity.User;
-import fr.nicos.allomairieapp.database.singleton.DatabaseSingleton;
+import fr.nicos.allomairieapp.core.api.NetworkHandler;
+import fr.nicos.allomairieapp.core.api.UserApi;
+import fr.nicos.allomairieapp.core.models.User;
+import fr.nicos.allomairieapp.core.sharedpreference.UserSharedPreferenceManager;
+import fr.nicos.allomairieapp.core.viewModel.UserViewModel;
 import fr.nicos.allomairieapp.databinding.FragmentEditProfileBinding;
-import fr.nicos.allomairieapp.ui.profile.editProfile.viewModels.UserViewModel;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class EditProfileFragment extends Fragment {
 
-    private UserViewModel mViewModel;
+    private UserViewModel userViewModel;
+    private UserSharedPreferenceManager userSharedPreferenceManager;
 
     private FragmentEditProfileBinding binding;
-
-    MyAppDatabase myAppDatabase;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
 
-        /** Instancation de la base de donnée local */
-        myAppDatabase = DatabaseSingleton.getInstance(requireContext());
+        ViewModelProvider viewModelProvider = new ViewModelProvider(requireActivity());
 
-        mViewModel = new UserViewModel();
+        userSharedPreferenceManager = UserSharedPreferenceManager.getInstance(getActivity());
+
+        ((MainActivity) getActivity()).setActionBarTitle("Modification de mes infos");
+
+        userViewModel = viewModelProvider.get(UserViewModel.class);
+
+        setValuesViewModel();
 
         binding = FragmentEditProfileBinding.inflate(inflater, container, false);
-        binding.setUserViewModel(mViewModel);
-        binding.executePendingBindings();
 
-        setupListeners();
+        binding.setLifecycleOwner(this);
 
-        getActivity().setTitle("Edit Profile");
+        binding.setUserViewModel(userViewModel);
+
+        observeViewModelUser();
 
         return binding.getRoot();
     }
 
-    private void setupListeners() {
-        // Source : https://dev.to/mustufa786/textinputlayout-form-validation-using-data-binding-in-android-8gf
-        binding.emailText.addTextChangedListener(new TextFieldValidation(binding.emailText));
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
 
-        binding.validateButton.setOnClickListener(new View.OnClickListener() {
+    private void setValuesViewModel() {
+        userViewModel.skipObservation = true;
+        userViewModel.FirstName.setValue(userSharedPreferenceManager.getFirstName());
+        userViewModel.LastName.setValue(userSharedPreferenceManager.getLastName());
+        userViewModel.EmailAddress.setValue(userSharedPreferenceManager.getEmailAddress());
+    }
+
+    private void observeViewModelUser() {
+        userViewModel.getErrorUser().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
-            public void onClick(View view) {
+            public void onChanged(@Nullable String error) {
+                setErrorToForm(error);
+            }
+        });
 
-                User user = new User();
-                user.setFirstName("Nicos");
-                user.setLastName("Aliagas");
+        userViewModel.observeUser(new Observer<User>() {
+            @Override
+            public void onChanged(User user) {
+                // editUser(user);
+                binding.txtEmailAddress.setErrorEnabled(false);
 
-                addUserInBackground(user);
+                Toast.makeText(requireContext(), "Vos données sont correctement à jours !", Toast.LENGTH_SHORT).show();
+            }
+        }, getViewLifecycleOwner());
+    }
 
-                if(isValidate()) {
-                    mViewModel.sendFormData();
+    private void setErrorToForm(String error) {
+        // binding.txtEmailAddress.setError(getString(error, "Email"));
+        binding.txtEmailAddress.setError(error);
+        binding.txtEmailAddress.requestFocus();
+    }
 
-                    getUsersInBackground();
+    private void editUser(User user) {
+        UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
+
+        Call<User> callApi = userApi.postUser(user);
+
+        callApi.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                if(response.isSuccessful()) {
+                    User userRegistred = response.body();
+
+                    Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
+
+                    String transactionName = "pageRegisterToLogin";
+                    getParentFragmentManager().beginTransaction()
+                            .addToBackStack(transactionName)
+                            .commit();
+
+                    Toast.makeText(requireContext(), "Compte créé avec succès !", Toast.LENGTH_SHORT).show();
+                } else {
+                    System.out.println(response.errorBody());
                 }
             }
-        });
-    }
 
-    public void addUserInBackground(User user) {
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executorService.execute(new Runnable() {
             @Override
-            public void run() {
-                myAppDatabase.userDao().addUser(user);
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(requireContext(), "Yoyoyo New User !!", Toast.LENGTH_SHORT).show();
-                    }
-                });
+            public void onFailure(Call<User> call, Throwable t) {
+                t.printStackTrace();
             }
         });
-    }
-
-    public void getUsersInBackground() {
-
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        Handler handler = new Handler(Looper.getMainLooper());
-
-        executorService.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<User> users = myAppDatabase.userDao().getAll();
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        users.forEach(user -> {
-                            System.out.println("Loaded User >>> " + user.getFirstName());
-                        });
-                    }
-                });
-            }
-        });
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
-
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        /*mUser = new User("Nicos", "Aliagas", "0000000000", "mail@gmail.com");
-        binding.setUser(mUser);*/
-    }
-
-    private Boolean isValidate() {
-        return validateEmail();
-    };
-
-    /**
-     * 1) field must not be empty
-     * 2) text should matches email address format
-     */
-    private boolean validateEmail() {
-        String email = binding.emailText.getText().toString().trim();
-        String field = "Email";
-        if (email.isEmpty()) {
-            binding.emailTextLayout.setError(getString(R.string.validator_field_required, field));
-            binding.emailText.requestFocus();
-            return false;
-        } else if (!FieldValidators.isValidEmail(email)) {
-            binding.emailTextLayout.setError(getString(R.string.validator_field_no_valid, field));
-            binding.emailText.requestFocus();
-            return false;
-        } else {
-            binding.emailTextLayout.setErrorEnabled(false);
-        }
-        return true;
-    }
-
-    @BindingAdapter({"toastMessage"})
-    public static void runMe(View view, String message) {
-        if (message != null) {
-            Toast.makeText(view.getContext(), message, Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public class TextFieldValidation implements TextWatcher {
-        private final View view;
-
-        public TextFieldValidation(View view) {
-            this.view = view;
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {}
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            // checking ids of each text field and applying functions accordingly.
-            if(view.getId() == R.id.emailText) {
-                validateEmail();
-            }
-        }
     }
 }

@@ -10,11 +10,19 @@ public class User {
     private String emailAddress;
     private String password;
 
-    public User(String FirstName, String LastName, String EmailAddress, String Password) {
-        firstName = FirstName;
-        lastName = LastName;
-        emailAddress = EmailAddress;
-        password = Password;
+    public User(String firstName, String lastName, String emailAddress, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+        this.password = password;
+    }
+
+    public User(int id, String firstName, String lastName, String emailAddress, String password) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.emailAddress = emailAddress;
+        this.password = password;
     }
 
     public int getId() {return id; }

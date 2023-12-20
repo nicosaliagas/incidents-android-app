@@ -22,7 +22,7 @@ import fr.nicos.allomairieapp.core.api.NetworkHandler;
 import fr.nicos.allomairieapp.core.api.UserApi;
 import fr.nicos.allomairieapp.core.models.LoginUser;
 import fr.nicos.allomairieapp.core.models.User;
-import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
+import fr.nicos.allomairieapp.core.sharedpreference.UserSharedPreferenceManager;
 import fr.nicos.allomairieapp.databinding.FragmentLoginBinding;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -33,7 +33,7 @@ public class LoginFragment extends Fragment {
     private FragmentLoginBinding binding;
 
     private LoginViewModel loginViewModel;
-    private LoginSharedPreferenceManager loginSharedPreferenceManager;
+    private UserSharedPreferenceManager userSharedPreferenceManager;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class LoginFragment extends Fragment {
 
         binding.setLoginViewModel(loginViewModel);
 
-        loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(getActivity());
+        userSharedPreferenceManager = UserSharedPreferenceManager.getInstance(getActivity());
 
         this.observeViewModelUser();
 
@@ -121,13 +121,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void setSharedPreference(User user) {
-        System.out.println("setSharedPreference");
-        System.out.println(user);
-
-        loginSharedPreferenceManager.setUserId(user.getId());
-        loginSharedPreferenceManager.setLastName(user.getLastName());
-        loginSharedPreferenceManager.setFirstName(user.getFirstName());
-        loginSharedPreferenceManager.setEmailAddress(user.getEmailAddress());
+        userSharedPreferenceManager.setUser(user);
     }
 
     private void authUser(LoginUser loginUser) {
@@ -139,9 +133,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()) {
-                    User userAuthenticated = response.body();
-
-                    setSharedPreference(userAuthenticated);
+                    setSharedPreference(response.body());
 
                     redirectToMainActivity();
 

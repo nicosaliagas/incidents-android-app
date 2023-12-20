@@ -4,180 +4,123 @@
     xmlns:tools="http://schemas.android.com/tools">
     <data>
         <variable
-            name="userViewModel"
-            type="fr.nicos.allomairieapp.ui.profile.editProfile.viewModels.UserViewModel" />
+            name="UserViewModel"
+            type="fr.nicos.allomairieapp.core.viewModel.UserViewModel" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/formIncidentLayout"
+    <android.widget.ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".ui.profile.editProfile.EditProfileFragment"
-        android:layoutDirection="ltr">
+        android:layout_height="wrap_content"
+        android:isScrollContainer="true">
 
-        <TableLayout
-            android:id="@+id/userTableLayout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:stretchColumns="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            tools:context=".ui.register.RegisterFragment">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <TextView
+                android:id="@+id/lblRegisterTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="50dp"
+                android:layout_marginEnd="8dp"
+                android:lineSpacingExtra="8sp"
+                android:text="@string/edit_profile_title"
+                android:textAlignment="center"
+                android:textSize="30sp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_person_icon" />
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtFirstName"
+                style="@style/TextInputLayoutStyle"
+                android:layout_marginTop="50dp"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintEnabled="false"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/lblRegisterTitle">
 
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/firstnameText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
+                    android:drawableStart="@drawable/ic_person_icon"
+                    android:drawablePadding="8dp"
                     android:hint="Prénom"
-                    app:endIconMode="clear_text"
-                    app:errorEnabled="true"
-                    app:startIconContentDescription="@string/content_description_end_icon_firstname">
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:singleLine="true"
+                    android:text="@={UserViewModel.FirstName}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/firstNameText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={userViewModel.userFirstName}"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtLastName"
+                style="@style/TextInputLayoutStyle"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintEnabled="false"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtFirstName">
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Space
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="25dp"
-                    android:layout_marginEnd="10dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/lastnameEditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
+                    android:drawableStart="@drawable/ic_person_icon"
+                    android:drawablePadding="8dp"
                     android:hint="Nom"
-                    app:endIconMode="clear_text"
-                    app:errorEnabled="true"
-                    app:startIconContentDescription="@string/content_description_end_icon_firstname">
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:singleLine="true"
+                    android:text="@={UserViewModel.LastName}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/lastNameText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={userViewModel.userLastName}"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/txtEmailAddress"
+                style="@style/TextInputLayoutStyle"
+                app:boxBackgroundColor="@android:color/transparent"
+                app:hintEnabled="false"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtLastName">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_phone_icon" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/emailText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
-                    android:hint="Téléphone"
-                    android:inputType="phone"
-                    android:ems="10"
-                    app:endIconMode="clear_text"
-                    app:errorEnabled="true"
-                    app:startIconContentDescription="@string/content_description_end_icon_firstname">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/phoneText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={userViewModel.userPhone}"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_email_icon" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/emailTextLayout"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="20dp"
+                    android:drawableStart="@drawable/ic_email_icon"
+                    android:drawablePadding="8dp"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
-                    app:endIconMode="clear_text"
-                    app:errorEnabled="true"
-                    app:startIconContentDescription="@string/content_description_end_icon_firstname">
-
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/emailText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="@={userViewModel.userEmail}"
-                        android:singleLine="true" />
-                </com.google.android.material.textfield.TextInputLayout>
-            </TableRow>
-        </TableLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="20dp"
-            android:gravity="end"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toBottomOf="@+id/userTableLayout">
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp"
+                    android:singleLine="true"
+                    android:text="@={UserViewModel.EmailAddress}" />
+            </com.google.android.material.textfield.TextInputLayout>
 
             <Button
-                android:id="@+id/cancelButton"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="wrap_content"
+                style="@style/ButtonStyle"
+                android:id="@+id/btnLogin"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="4dp"
-                android:text="@string/cancel_button_text"
-                android:textColor="@color/md_theme_light_primary" />
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="32dp"
+                android:layout_marginEnd="32dp"
+                android:onClick="@{(v) -> UserViewModel.onClickProfil(v)}"
+                android:text="Valider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtEmailAddress" />
 
-            <Button
-                android:id="@+id/validateButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:backgroundTint="@color/md_theme_light_primary"
-                android:text="@string/validate_button_text"
-                android:textColor="@android:color/white"
-                tools:ignore="ButtonStyle"
-                tools:toastMessage="@{userViewModel.toastMessage}"/>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </android.widget.ScrollView>
 </layout>

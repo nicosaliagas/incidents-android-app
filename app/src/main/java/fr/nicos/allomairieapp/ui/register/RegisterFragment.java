@@ -1,7 +1,6 @@
 package fr.nicos.allomairieapp.ui.register;
 
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
-
-import java.util.Objects;
 
 import fr.nicos.allomairieapp.LoginActivity;
 import fr.nicos.allomairieapp.R;
@@ -35,7 +32,7 @@ public class RegisterFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ViewModelProvider viewModelProvider = new ViewModelProvider(this);
+        ViewModelProvider viewModelProvider = new ViewModelProvider(requireActivity());
 
         ((LoginActivity) getActivity()).setActionBarTitle("Nouveau compte");
 
@@ -47,25 +44,39 @@ public class RegisterFragment extends Fragment {
 
         binding.setUserViewModel(userViewModel);
 
-        this.observeViewModelUser();
-
-        this.setupListeners();
+        observeViewModelUser();
 
         return binding.getRoot();
     }
 
     private void observeViewModelUser() {
+        userViewModel.getErrorUser().observe(getViewLifecycleOwner(), new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable String error) {
+                setErrorToForm(error);
+            }
+        });
+
         userViewModel.getUser().observe(getViewLifecycleOwner(), new Observer<User>() {
             @Override
             public void onChanged(@Nullable User user) {
-                if(isFormValid(user)) {
-                    postUser(user);
-                }
+                postUser(user);
+
+                binding.txtEmailAddress.setErrorEnabled(false);
+                binding.txtPassword.setErrorEnabled(false);
             }
         });
     }
 
-    private boolean isFormValid(User user) {
+    private void setErrorToForm(String error) {
+        binding.txtEmailAddress.setError(error);
+        binding.txtEmailAddress.requestFocus();
+
+        binding.txtPassword.setError(error);
+        binding.txtPassword.requestFocus();
+    }
+
+    /*private boolean isFormValid(User user) {
         boolean isValid = true;
         String emailField = "Email";
         String passwordField = "Mot de passe";
@@ -102,11 +113,7 @@ public class RegisterFragment extends Fragment {
         }
 
         return isValid;
-    }
-
-    private void setupListeners() {
-
-    }
+    }*/
 
     private void postUser(User user) {
         UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
@@ -117,8 +124,6 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()) {
-                    User userRegistred = response.body();
-
                     Navigation.findNavController(getView()).navigate(R.id.action_registerFragment_to_loginFragment);
 
                     String transactionName = "pageRegisterToLogin";
@@ -126,7 +131,7 @@ public class RegisterFragment extends Fragment {
                             .addToBackStack(transactionName)
                             .commit();
 
-                    Toast.makeText(requireContext(), "Compte créé avec succès !", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(requireContext(), "Votre compte a été créé avec succès !", Toast.LENGTH_SHORT).show();
                 } else {
                     System.out.println(response.errorBody());
                 }

@@ -7,9 +7,12 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -21,10 +24,10 @@ import com.google.android.material.navigation.NavigationView;
 import fr.nicos.allomairieapp.core.api.NetworkHandler;
 import fr.nicos.allomairieapp.core.api.UserApi;
 import fr.nicos.allomairieapp.core.models.User;
-import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
+import fr.nicos.allomairieapp.core.sharedpreference.UserSharedPreferenceManager;
+import fr.nicos.allomairieapp.core.viewModel.UserViewModel;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
 import fr.nicos.allomairieapp.databinding.ActivityMainBinding;
-import fr.nicos.allomairieapp.core.viewModel.UserViewModel;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,9 +37,11 @@ public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
 
-    private LoginSharedPreferenceManager loginSharedPreferenceManager;
-
     private UserViewModel userViewModel;
+
+    private UserSharedPreferenceManager userSharedPreferenceManager;
+
+    private Toolbar toolbar;
 
     MyAppDatabase myAppDatabase;
 
@@ -45,18 +50,19 @@ public class MainActivity extends AppCompatActivity {
     // Menu de navigation
     DrawerLayout drawer;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(this);
-
         ViewModelProvider viewModelProvider = new ViewModelProvider(this);
 
-        userViewModel = viewModelProvider.get(UserViewModel.class);
+        userSharedPreferenceManager = UserSharedPreferenceManager.getInstance(this);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+
+        toolbar = binding.appBarMain.toolbar;
+
+        userViewModel = viewModelProvider.get(UserViewModel.class);
 
         setContentView(binding.getRoot());
 
@@ -66,7 +72,14 @@ public class MainActivity extends AppCompatActivity {
 
         setupListeners();
 
-        initInfosUserAuthenticated();
+        /** on mets à jour les valeurs de la vue */
+        setInfosUserView();
+
+        /** en écoute sur les changements du view model de l'objet utilisateur */
+        observeViewModelUser();
+
+        /** on récupère l'objet Utilisateur en bdd si on est connecté */
+        getUserDatasFromBack();
 
         drawer = binding.drawerLayout;
 
@@ -82,6 +95,25 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    /**
+     * en écoute sur les changements du view model de l'objet utilisateur
+     * pour mettre à jour les valeurs dans le sharedPreference
+     */
+    private void observeViewModelUser() {
+        userViewModel.getUser().observe(this, new Observer<User>() {
+            @Override
+            public void onChanged(@Nullable User user) {
+                setSharedPreference(user);
+
+                setInfosUserView();
+            }
+        });
+    }
+
+    private void setSharedPreference(User user) {
+        userSharedPreferenceManager.setUser(user);
+    }
+
     private void redirectToWelcomePageIfNotAuthenticated() {
         if (!isUserAuthenticated()) {
             startActivity(new Intent(this, LoginActivity.class));
@@ -90,32 +122,30 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean isUserAuthenticated() {
-        return loginSharedPreferenceManager.getEmailAddress() != null && loginSharedPreferenceManager.getLastName() != null && loginSharedPreferenceManager.getLastName() != null;
+        return userSharedPreferenceManager.getEmailAddress() != null && userSharedPreferenceManager.getLastName() != null && userSharedPreferenceManager.getLastName() != null;
     }
 
-    private void initInfosUserAuthenticated() {
+    private void setInfosUserView() {
         TextView headerFirstNameUser = binding.navView.getHeaderView(0).findViewById(R.id.header_firstNameUser);
-        headerFirstNameUser.setText(loginSharedPreferenceManager.getFirstName());
+        headerFirstNameUser.setText(userSharedPreferenceManager.getFirstName());
 
         TextView headerEmailAddressUser = binding.navView.getHeaderView(0).findViewById(R.id.header_emailAddressUser);
-        headerEmailAddressUser.setText(loginSharedPreferenceManager.getEmailAddress());
-
-        /** On interroge le back pour charger l'objet User */
-        getUserInformations();
+        headerEmailAddressUser.setText(userSharedPreferenceManager.getEmailAddress());
     }
 
-    private void getUserInformations() {
+    /** on récupère l'objet Utilisateur en bdd si on est connecté
+     * et on stocke les variables dans le shared preference
+     * */
+    private void getUserDatasFromBack() {
         UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
 
-        Call<User> callApi = userApi.getUser(loginSharedPreferenceManager.getUserId());
+        Call<User> callApi = userApi.getUser(userSharedPreferenceManager.getUserId());
 
         callApi.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if(response.isSuccessful()) {
-                    User userAuthenticated = response.body();
-
-                    userViewModel.setUser(userAuthenticated);
+                    userSharedPreferenceManager.setUser(response.body());
                 }
             }
 
@@ -163,5 +193,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(view.getContext(), "Start a new Activity", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public void setActionBarTitle(String title){
+        toolbar.setTitle(title);
     }
 }

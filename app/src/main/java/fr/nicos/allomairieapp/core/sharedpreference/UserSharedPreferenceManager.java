@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import fr.nicos.allomairieapp.R;
+import fr.nicos.allomairieapp.core.models.User;
 
-public class LoginSharedPreferenceManager {
+public class UserSharedPreferenceManager {
 
-    private static LoginSharedPreferenceManager instance;
+    private static UserSharedPreferenceManager instance;
     private SharedPreferences sharedPreferences;
 
     private int id;
@@ -15,15 +16,26 @@ public class LoginSharedPreferenceManager {
     private String lastName;
     private String emailAddress;
 
-    private LoginSharedPreferenceManager(Context context) {
+    private UserSharedPreferenceManager(Context context) {
         sharedPreferences = context.getSharedPreferences(String.valueOf(R.string.user_connected_preference_key), Context.MODE_PRIVATE);
     }
 
-    public static synchronized LoginSharedPreferenceManager getInstance(Context context) {
+    public static synchronized UserSharedPreferenceManager getInstance(Context context) {
         if (instance == null) {
-            instance = new LoginSharedPreferenceManager(context);
+            instance = new UserSharedPreferenceManager(context);
         }
         return instance;
+    }
+
+    public User getUser() {
+        return new User(id, firstName, lastName, emailAddress, null);
+    }
+
+    public void setUser(User user) {
+        this.setUserId(user.getId());
+        this.setLastName(user.getLastName());
+        this.setFirstName(user.getFirstName());
+        this.setEmailAddress(user.getEmailAddress());
     }
 
     public int getUserId() {

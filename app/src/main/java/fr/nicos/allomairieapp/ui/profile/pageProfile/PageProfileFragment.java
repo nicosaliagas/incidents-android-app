@@ -20,8 +20,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import fr.nicos.allomairieapp.LoginActivity;
+import fr.nicos.allomairieapp.MainActivity;
 import fr.nicos.allomairieapp.R;
-import fr.nicos.allomairieapp.core.sharedpreference.LoginSharedPreferenceManager;
+import fr.nicos.allomairieapp.core.sharedpreference.UserSharedPreferenceManager;
 import fr.nicos.allomairieapp.database.MyAppDatabase;
 import fr.nicos.allomairieapp.database.entity.User;
 import fr.nicos.allomairieapp.database.singleton.DatabaseSingleton;
@@ -35,7 +36,7 @@ public class PageProfileFragment extends Fragment {
 
     private User userProfil;
 
-    private LoginSharedPreferenceManager loginSharedPreferenceManager;
+    private UserSharedPreferenceManager userSharedPreferenceManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,7 +48,9 @@ public class PageProfileFragment extends Fragment {
         binding = FragmentPageProfileBinding.inflate(inflater, container, false);
         // binding.executePendingBindings();
 
-        loginSharedPreferenceManager = LoginSharedPreferenceManager.getInstance(getActivity());
+        userSharedPreferenceManager = UserSharedPreferenceManager.getInstance(getActivity());
+
+        ((MainActivity) getActivity()).setActionBarTitle("Profile");
 
         getSharedPreference();
 
@@ -62,7 +65,7 @@ public class PageProfileFragment extends Fragment {
 
     private void initInfosUserAuthenticated() {
         TextView profilIdentity = binding.profilIdentity;
-        profilIdentity.setText(loginSharedPreferenceManager.getLastName() + " " + loginSharedPreferenceManager.getFirstName());
+        profilIdentity.setText(userSharedPreferenceManager.getLastName() + " " + userSharedPreferenceManager.getFirstName());
     }
 
     private void getSharedPreference() {
@@ -119,10 +122,10 @@ public class PageProfileFragment extends Fragment {
     }
 
     private void logout() {
-        loginSharedPreferenceManager.setUserId(0);
-        loginSharedPreferenceManager.setLastName(null);
-        loginSharedPreferenceManager.setFirstName(null);
-        loginSharedPreferenceManager.setEmailAddress(null);
+        userSharedPreferenceManager.setUserId(0);
+        userSharedPreferenceManager.setLastName(null);
+        userSharedPreferenceManager.setFirstName(null);
+        userSharedPreferenceManager.setEmailAddress(null);
     }
 
     private void redirectToLoginActivity() {
