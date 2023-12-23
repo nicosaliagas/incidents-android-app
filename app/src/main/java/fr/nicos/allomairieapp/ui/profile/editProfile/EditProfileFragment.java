@@ -64,6 +64,7 @@ public class EditProfileFragment extends Fragment {
 
     private void setValuesViewModel() {
         userViewModel.skipObservation = true;
+        userViewModel.setId(userSharedPreferenceManager.getUserId());
         userViewModel.FirstName.setValue(userSharedPreferenceManager.getFirstName());
         userViewModel.LastName.setValue(userSharedPreferenceManager.getLastName());
         userViewModel.EmailAddress.setValue(userSharedPreferenceManager.getEmailAddress());
@@ -80,7 +81,7 @@ public class EditProfileFragment extends Fragment {
         userViewModel.observeUser(new Observer<User>() {
             @Override
             public void onChanged(User user) {
-                // editUser(user);
+                editUser(user);
                 binding.txtEmailAddress.setErrorEnabled(false);
 
                 Toast.makeText(requireContext(), "Vos données sont correctement à jours !", Toast.LENGTH_SHORT).show();
@@ -97,7 +98,7 @@ public class EditProfileFragment extends Fragment {
     private void editUser(User user) {
         UserApi userApi = NetworkHandler.getRetrofit().create(UserApi.class);
 
-        Call<User> callApi = userApi.postUser(user);
+        Call<User> callApi = userApi.editUser(user);
 
         callApi.enqueue(new Callback<User>() {
             @Override

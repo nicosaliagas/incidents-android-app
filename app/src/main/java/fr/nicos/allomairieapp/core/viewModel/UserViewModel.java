@@ -12,6 +12,7 @@ import fr.nicos.allomairieapp.core.models.User;
 
 public class UserViewModel extends ViewModel {
     public boolean skipObservation = false;
+    private int Id;
     public MutableLiveData<String> FirstName = new MutableLiveData<>();
     public MutableLiveData<String> LastName = new MutableLiveData<>();
     public MutableLiveData<String> EmailAddress = new MutableLiveData<>();
@@ -19,6 +20,14 @@ public class UserViewModel extends ViewModel {
 
     private MutableLiveData<User> userMutableLiveData;
     private MutableLiveData<String> errorFormMutableLiveData;
+
+    public void setId(int id) {
+        this.Id = id;
+    }
+
+    public int getId() {
+        return this.Id;
+    }
 
     public MutableLiveData<User> getUser() {
         if (userMutableLiveData == null) {
@@ -59,7 +68,7 @@ public class UserViewModel extends ViewModel {
 
     public void onClickProfil(View view) {
         skipObservation = false;
-        User user = new User(FirstName.getValue(), LastName.getValue(), EmailAddress.getValue(), Password.getValue());
+        User user = new User(getId(), FirstName.getValue(), LastName.getValue(), EmailAddress.getValue(), Password.getValue());
 
         if(isCheckEmailForm(user)) {
             userMutableLiveData.setValue(user);
